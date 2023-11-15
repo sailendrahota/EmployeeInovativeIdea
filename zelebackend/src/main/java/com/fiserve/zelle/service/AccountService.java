@@ -15,4 +15,5 @@ public interface AccountService {
 	public AccountResponse createAccount(EmployeeDetail accountSchema) throws Exception;
 	
 	public String deductTax(EmployeeDetail accountSchema) throws Exception;
+	public void  validateEmployeeDetail(EmployeeDetail empDetail) throws Exception;
 }
