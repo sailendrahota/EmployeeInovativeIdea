@@ -13,13 +13,15 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fiserve.zelle.exception.InvalidDataException;
 import com.fiserve.zelle.model.EmployeeDetail;
 import com.fiserve.zelle.repository.AccountRepository;
 import com.fiserve.zelle.response.AccountResponse;
 import com.fiserve.zelle.service.AccountService;
+import com.fiserve.zelle.utils.DataValidator;
 
 /**
- * @author syedmohamedyusuf
+ * @author
  *
  */
 @Service
@@ -31,6 +33,8 @@ public class AccountServiceImpl implements AccountService {
 	/* Create new Account */
 	@Override
 	public AccountResponse createAccount(EmployeeDetail accountSchema) throws Exception {
+		
+		
 
 		AccountResponse accountResponse = new AccountResponse();
 
@@ -96,5 +100,47 @@ public class AccountServiceImpl implements AccountService {
 				+ "Salary after tax deduction is: " + (salary - tax_amount);
 
 		return taxResponse;
+	}
+
+	@Override
+	public void validateEmployeeDetail(EmployeeDetail empDetail) throws Exception {
+		
+		if( empDetail.getEmployeeId()== null) {
+			throw  new InvalidDataException("invallid employee_id");
+		}
+		
+		if( empDetail.getFirstName()== null) {
+			throw  new InvalidDataException("invallid firstName");
+		}
+		
+		if( empDetail.getLastName()== null) {
+			throw  new InvalidDataException("invallid lastName");
+		}
+		
+		
+		if(!DataValidator.isValidEmail(empDetail.getEmail())) {
+			throw  new InvalidDataException("invallid email adress");
+		}
+		
+		if(!DataValidator.isValidEmail(empDetail.getPhoneNumber())) {
+			throw  new InvalidDataException("invallid phone number");
+		}
+		
+		if(!DataValidator.isValidDate(empDetail.getDoj())) {
+			throw  new InvalidDataException("invallid date of joining");
+		}
+		if(!DataValidator.isValidSalary(empDetail.getSalary())) {
+			throw  new InvalidDataException("invallid salary");
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	}
 }
