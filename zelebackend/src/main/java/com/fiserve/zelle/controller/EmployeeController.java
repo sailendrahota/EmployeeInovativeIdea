@@ -42,7 +42,8 @@ public class EmployeeController {
 			@ApiResponse(code = 404, message = "Account already exist"),
 			@ApiResponse(code = 500, message = "Internal error") })
 	public ResponseEntity registerUser(@Validated @RequestBody EmployeeDetail employeeDetails, HttpHeaders headers) {
-		try {
+		try {   
+			accountService.validateEmployeeDetail(employeeDetails);
 			AccountResponse data = accountService.createAccount(employeeDetails);
 			return new ResponseEntity<AccountResponse>(data, HttpStatus.CREATED);
 		} catch (Exception e) {
@@ -64,7 +65,8 @@ public class EmployeeController {
 			@ApiResponse(code = 403, message = "Forbidden Account"),
 			@ApiResponse(code = 500, message = "Internal error") })
 	public ResponseEntity taxDetail(@Validated @RequestBody EmployeeDetail employeeDetails, HttpHeaders headers) {
-		try {
+		try {   
+			accountService.validateEmployeeDetail(employeeDetails);
 			String data = accountService.deductTax(employeeDetails);
 			return new ResponseEntity<String>(data, HttpStatus.CREATED);
 		} catch (Exception e) {
