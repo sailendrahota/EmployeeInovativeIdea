@@ -49,7 +49,9 @@ public class EmployeeController {
 		} catch (Exception e) {
 			if (e instanceof ApiException) {
 				return new ResponseEntity(((ApiException) e).body, ((ApiException) e).code);
-			} else {
+			}if (e instanceof InvalidDataException) {
+				throw  new InvalidDataException(e.getMessage());
+			}  else {
 				e.printStackTrace();
 				return new ResponseEntity("Internal error", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
@@ -72,6 +74,8 @@ public class EmployeeController {
 		} catch (Exception e) {
 			if (e instanceof ApiException) {
 				return new ResponseEntity(((ApiException) e).body, ((ApiException) e).code);
+			} if (e instanceof InvalidDataException) {
+				throw  new InvalidDataException(e.getMessage());
 			} else {
 				e.printStackTrace();
 				return new ResponseEntity("Internal error", HttpStatus.INTERNAL_SERVER_ERROR);
