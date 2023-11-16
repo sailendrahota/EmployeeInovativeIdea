@@ -64,11 +64,10 @@ public class AccountServiceImpl implements AccountService {
 		double tempSalary = 0.0;
 		double tempTax = 0;
 		double salary = accountSchema.getSalary();
-		Date doj = accountSchema.getDoj();
 		double netSalary;
         double lossOfPay=salary/30;
 		LocalDate financialEndingDate = LocalDate.of(Year.now().getValue(), Month.MARCH, 1);
-		LocalDate joining = doj.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate joining = accountSchema.getDoj().toLocalDate();
 		Period age = Period.between(joining, financialEndingDate);
 		int months = age.getMonths();
 		int days = age.getDays();
