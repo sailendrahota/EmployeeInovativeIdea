@@ -122,7 +122,7 @@ public class AccountServiceImpl implements AccountService {
 			throw  new InvalidDataException("invallid email adress");
 		}
 		
-		if(!DataValidator.isValidEmail(empDetail.getPhoneNumber())) {
+		if(!DataValidator.isValidPhoneNumber(empDetail.getPhoneNumber())) {
 			throw  new InvalidDataException("invallid phone number");
 		}
 		
