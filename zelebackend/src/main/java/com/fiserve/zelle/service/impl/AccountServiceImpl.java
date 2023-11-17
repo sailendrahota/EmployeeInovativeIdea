@@ -92,7 +92,7 @@ public class AccountServiceImpl implements AccountService {
 			tax_amount = tempTax;
 		} else if ((netSalary > 2500000)) {
 			tempSalary = netSalary - 1000000;
-			cess = 0.02 * netSalary - 2500000;
+			cess = 0.02 * (netSalary - 2500000);
 			tempTax = 0.20 * tempSalary + 0.10 * 500000 + 0.05 * 250000 + cess;
 			tax_amount = tempTax;
 
