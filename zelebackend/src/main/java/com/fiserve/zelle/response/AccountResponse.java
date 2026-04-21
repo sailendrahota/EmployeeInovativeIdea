@@ -1,6 +1,7 @@
 package com.fiserve.zelle.response;
 
-public class AccountResponse {
+public class
+AccountResponse {
 
 	private Long EmployeeId;
 	private String firstName;
@@ -24,7 +25,7 @@ public class AccountResponse {
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
-
+// TODO add atrributes
 	public String getLastName() {
 		return lastName;
 	}
