@@ -34,6 +34,8 @@ jobs:
   # JOB 2: Build, Push, and Trigger GitOps Delivery (Fully Secure & Dynamic)
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  #give permission to push or write in git repo
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
