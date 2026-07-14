@@ -28,7 +28,7 @@ function App() {
     // --- EFFECT FOR DIAGNOSTICS ---
     useEffect(() => {
         // Fetches your runtime environment data directly from the flat /info endpoint
-        fetch('/info')
+        fetch('http://localhost:8080/info')
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Failed to reach cluster metadata endpoint');
