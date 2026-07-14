@@ -12,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 @RestController
 
 
@@ -80,6 +83,23 @@ public class EmployeeController {
 			}
 		}
 
+	}
+	@GetMapping("/info")
+	public Map<String, String> getEnvironmentDetails() {
+		Map<String, String> metadata = new LinkedHashMap<>();
+
+		// 1. Fetching internal JVM & OS properties using System.getProperty
+		metadata.put("java_version", System.getProperty("java.version"));
+		metadata.put("java_vendor", System.getProperty("java.vendor"));
+		metadata.put("os_name", System.getProperty("os.name"));
+		metadata.put("os_architecture", System.getProperty("os.arch"));
+
+		// 2. Fetching runtime environment injected by Kubernetes using System.getenv
+		// If the variable doesn't exist, it gracefully defaults to "standalone-local"
+		String currentEnv = System.getenv().getOrDefault("APP_ENV", "standalone-local");
+		metadata.put("runtime_environment", currentEnv);
+
+		return metadata;
 	}
 
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function App() {
     // --- STATE FOR POST (Register Employee) ---
@@ -20,6 +20,32 @@ function App() {
     const [taxError, setTaxError] = useState(null);
     const [isSearching, setIsSearching] = useState(false);
 
+    // --- STATE FOR RUNTIME DIAGNOSTICS (/info) ---
+    const [envData, setEnvData] = useState(null);
+    const [envLoading, setEnvLoading] = useState(true);
+    const [envError, setEnvError] = useState(null);
+
+    // --- EFFECT FOR DIAGNOSTICS ---
+    useEffect(() => {
+        // Fetches your runtime environment data directly from the flat /info endpoint
+        fetch('/info')
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to reach cluster metadata endpoint');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setEnvData(data);
+                setEnvLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                setEnvError(err.message);
+                setEnvLoading(false);
+            });
+    }, []);
+
     // --- HANDLERS ---
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -27,12 +53,11 @@ function App() {
         setRegisterStatus(null);
 
         try {
-            // Format the data to match your backend expectations
             const payload = {
                 ...formData,
                 employeeId: parseInt(formData.employeeId),
                 salary: parseFloat(formData.salary),
-                doj: formData.doj ? formData.doj.split('T')[0] : null // Fixed date formatting!
+                doj: formData.doj ? formData.doj.split('T')[0] : null
             };
 
             const response = await fetch('http://localhost:8080/registeremployee', {
@@ -43,17 +68,15 @@ function App() {
 
             if (response.ok) {
                 setRegisterStatus({ type: 'success', message: 'Employee successfully registered!' });
-                setFormData({ employeeId: '', firstName: '', lastName: '', email: '', phoneNumber: '', doj: '', salary: '' }); // Clear form
+                setFormData({ employeeId: '', firstName: '', lastName: '', email: '', phoneNumber: '', doj: '', salary: '' });
             } else {
-                // EXTRACT BACKEND VALIDATION ERROR HERE
                 try {
                     const errorData = await response.json();
                     setRegisterStatus({
                         type: 'error',
-                        message: `Error: ${errorData.message}` // This will display your Spring Boot message
+                        message: `Error: ${errorData.message}`
                     });
                 } catch (parseError) {
-                    // Fallback if the backend sends a non-JSON 4xx error
                     setRegisterStatus({ type: 'error', message: 'Failed to register employee (Invalid Data).' });
                 }
             }
@@ -63,6 +86,7 @@ function App() {
             setIsRegistering(false);
         }
     };
+
     const handleTaxSearch = async (e) => {
         e.preventDefault();
         setIsSearching(true);
@@ -88,8 +112,46 @@ function App() {
         <div className="min-h-screen bg-slate-50 p-8 font-sans text-slate-800">
             <div className="max-w-7xl mx-auto">
                 <h1 className="text-4xl font-extrabold text-slate-900 mb-2 text-center tracking-tight">Enterprise HR Portal</h1>
-                <p className="text-center text-slate-500 mb-10">Manage employee onboarding and financial records</p>
+                <p className="text-center text-slate-500 mb-8">Manage employee onboarding and financial records</p>
 
+                {/* --- FULL WIDTH SECTION: DIAGNOSTICS WIDGET --- */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-10">
+                    <h3 className="text-sm font-bold tracking-wider text-slate-400 uppercase mb-4 flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        System Runtime Diagnostics
+                    </h3>
+
+                    {envLoading && (
+                        <div className="text-slate-400 font-medium text-sm animate-pulse">
+                            Quizzing cluster API for container environment parameters...
+                        </div>
+                    )}
+
+                    {envError && (
+                        <div className="text-sm font-medium text-red-600 bg-red-50 p-3 rounded-lg border border-red-100">
+                            ⚠️ API Offline or Port-Forward Missing: {envError}
+                        </div>
+                    )}
+
+                    {envData && (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <span className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Runtime Environment</span>
+                                <span className="text-base font-bold text-emerald-600">{envData.runtime_environment}</span>
+                            </div>
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <span className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Java JVM Build</span>
+                                <span className="text-base font-bold text-slate-800">{envData.java_version} <span className="text-xs text-slate-500 font-normal">({envData.java_vendor})</span></span>
+                            </div>
+                            <div className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <span className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Container Architecture</span>
+                                <span className="text-base font-bold text-slate-800">{envData.os_name} <span className="text-xs text-slate-500 font-normal">({envData.os_architecture})</span></span>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* --- TWO COLUMN WEB PORTAL MATRIX --- */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
 
                     {/* LEFT COLUMN: REGISTRATION FORM */}
