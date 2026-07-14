@@ -14,7 +14,7 @@ function App() {
     const [registerStatus, setRegisterStatus] = useState(null);
     const [isRegistering, setIsRegistering] = useState(false);
 
-    // --- STATE FOR GET (Tax Lookup) ---
+    // --- STATE FOR GET (Tax Lookup)  ---
     const [searchId, setSearchId] = useState('');
     const [taxData, setTaxData] = useState(null);
     const [taxError, setTaxError] = useState(null);
