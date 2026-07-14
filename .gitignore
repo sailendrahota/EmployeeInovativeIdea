@@ -1,0 +1,24 @@
+# IntelliJ IDE Settings
+.idea/
+*.iml
+
+# Spring Boot / Maven Backend
+target/
+*.class
+
+# React / Node Frontend
+node_modules/
+dist/
+build/
+.env
+
+# General Mac/Windows System Files
+.DS_Store
+Thumbs.db
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log

@@ -1,0 +1,59 @@
+name: Full Stack Enterprise CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # JOB 1: The Quality Scan (Runs independently in the background)
+  qodana-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Qodana Scan
+        uses: JetBrains/qodana-action@v2026.1
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+        with:
+          pr-mode: false
+          use-caches: true
+          post-pr-comment: true
+          use-annotations: true
+          upload-result: false
+          push-fixes: 'none'
+
+  # JOB 2: Build and Push (Runs in parallel, completely independent of the scan)
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Backend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./zelebackend
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/zelebackend:v1
+
+      - name: Build and Push Frontend
+        uses: docker/build-push-action@v4
+        with:
+          context: ./zele-frontend
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/zelefrontend:v1

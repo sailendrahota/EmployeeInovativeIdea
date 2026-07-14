@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zelefrontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zelefrontend
+  template:
+    metadata:
+      labels:
+        app: zelefrontend
+    spec:
+      containers:
+        - name: zelefrontend
+          image: sailenhota/zelefrontend:v1
+       #   imagePullPolicy: Never # Forces K8s to use your local image
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zelefrontend-service
+spec:
+  type: NodePort
+  selector:
+    app: zelefrontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30080
