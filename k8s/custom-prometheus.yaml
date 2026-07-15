@@ -1,0 +1,151 @@
+# kube-prometheus-stack Helm values — optimised for Minikube (local dev)
+# Helm chart: https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
+#
+# Install:
+#   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+#   helm repo update
+#   helm install monitoring prometheus-community/kube-prometheus-stack \
+#     --namespace monitoring --create-namespace \
+#     --values prometheus-stack-values.yaml --wait --timeout 10m
+
+# ─── Grafana ─────────────────────────────────────────────────────────────────
+grafana:
+  enabled: true
+  adminPassword: "admin123"   # Change for non-demo environments
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  # Persistence disabled — data is lost on pod restart (fine for local dev)
+  persistence:
+    enabled: false
+
+  # Resource limits tuned for Minikube
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "300m"
+      memory: "256Mi"
+
+  # Sidecar: auto-provisions dashboards from ConfigMaps labelled grafana_dashboard=1
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      # ALL = search every namespace; change to specific namespace if preferred
+      searchNamespace: ALL
+    datasources:
+      enabled: true
+
+  # Default dashboard retention settings
+  grafana.ini:
+    auth.anonymous:
+      enabled: false
+    dashboards:
+      default_home_dashboard_path: ""
+
+# ─── Prometheus ───────────────────────────────────────────────────────────────
+prometheus:
+  enabled: true
+
+  prometheusSpec:
+    # ── Service Monitor discovery ──────────────────────────────────────────
+    # Setting these to {} + false allows Prometheus to discover ALL
+    # ServiceMonitors across ALL namespaces — no need for release labels.
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+
+    # ── Pod Monitor discovery ──────────────────────────────────────────────
+    podMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelector: {}
+    podMonitorNamespaceSelector: {}
+
+    # ── Probe discovery ────────────────────────────────────────────────────
+    probeSelectorNilUsesHelmValues: false
+    probeSelector: {}
+    probeNamespaceSelector: {}
+
+    # ── Rule discovery ─────────────────────────────────────────────────────
+    ruleSelectorNilUsesHelmValues: false
+    ruleSelector: {}
+    ruleNamespaceSelector: {}
+
+    # Data retention (keep short for Minikube to save disk space)
+    retention: 24h
+    retentionSize: "2GB"
+
+    # Resource limits tuned for Minikube
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+
+    # Disable persistent storage — metrics are lost on pod restart
+    # For production, use a StorageClass with an appropriate PVC
+    storageSpec: {}
+
+    # Scrape interval (default 30s; reduce to 15s for faster feedback in demo)
+    scrapeInterval: "15s"
+    evaluationInterval: "15s"
+
+# ─── Alertmanager ─────────────────────────────────────────────────────────────
+# Disabled to save resources on Minikube. Enable for real environments.
+alertmanager:
+  enabled: false
+
+# ─── Prometheus Operator ──────────────────────────────────────────────────────
+prometheusOperator:
+  enabled: true
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "128Mi"
+  # Admission webhook — disable if cert-manager is not installed
+  admissionWebhooks:
+    enabled: true
+    patch:
+      enabled: true
+
+# ─── Node Exporter ────────────────────────────────────────────────────────────
+# Collects host-level metrics: CPU, memory, disk, network
+nodeExporter:
+  enabled: true
+
+# ─── Kube State Metrics ───────────────────────────────────────────────────────
+# Exposes Kubernetes object state: pods, deployments, services, etc.
+kubeStateMetrics:
+  enabled: true
+
+# ─── Component monitors ───────────────────────────────────────────────────────
+# coreDns is generally accessible in Minikube
+coreDns:
+  enabled: true
+
+# The following are usually NOT accessible in Minikube (API server protects them)
+# Disable to avoid "connection refused" targets in Prometheus
+kubeProxy:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+
+# kubelet metrics — leave at chart defaults.
+# kube-prometheus-stack handles kubelet HTTPS scraping via the API server
+# proxy automatically. Do NOT set https: false; port 10255 is disabled
+# by default in Minikube and will produce connection-refused errors.
+kubelet:
+  enabled: true
