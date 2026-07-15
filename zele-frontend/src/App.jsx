@@ -28,7 +28,7 @@ function App() {
     // --- EFFECT FOR DIAGNOSTICS ---
     useEffect(() => {
         // Fetches your runtime environment data directly from the flat /info endpoint
-        fetch('http://localhost:8080/info')
+        fetch('api/info')
             .then((response) => {
                 if (!response.ok) {
                     throw new Error('Failed to reach cluster metadata endpoint');
@@ -60,7 +60,7 @@ function App() {
                 doj: formData.doj ? formData.doj.split('T')[0] : null
             };
 
-            const response = await fetch('http://localhost:8080/registeremployee', {
+            const response = await fetch('api/registeremployee', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
@@ -94,7 +94,7 @@ function App() {
         setTaxData(null);
 
         try {
-            const response = await fetch(`http://localhost:8080/tax?employee_id=${searchId}`);
+            const response = await fetch(`api/tax?employee_id=${searchId}`);
             if (response.ok) {
                 const data = await response.json();
                 setTaxData(data);
