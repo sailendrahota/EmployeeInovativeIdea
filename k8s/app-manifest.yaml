@@ -39,7 +39,7 @@ spec:
       # ---------------------------
       containers:
         - name: spring-boot-app
-          image: sailenhota/zele-backend:04749ee
+          image: sailenhota/zele-backend:d94cf1c
           env:
             - name: DATABASE_HOST                          # Add this block
               value: "mysql-service"                       # Points to K8s MySQL
