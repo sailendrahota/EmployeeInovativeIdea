@@ -40,14 +40,39 @@ spec:
       containers:
         - name: spring-boot-app
           image: sailenhota/zele-backend:04749ee
+            # Inside app-manifest.yaml -> spec.template.spec.containers.env
           env:
-            - name: DATABASE_HOST                          # Add this block
-              value: "mysql-service"                       # Points to K8s MySQL
-            - name: APP_ENV                       # ADD THIS NEW BLOCK
-              value: "Minikube-Local Cluster"
+              # --- Non-Sensitive Routing (From ConfigMap) ---
+             - name: DATABASE_HOST
+               valueFrom:
+                  configMapKeyRef:
+                    name: spring-boot-config
+                    key: DATABASE_HOST
+             - name: DATABASE_NAME
+               valueFrom:
+                  configMapKeyRef:
+                    name: spring-boot-config
+                    key: DATABASE_NAME
+             - name: APP_ENV
+               valueFrom:
+                  configMapKeyRef:
+                    name: spring-boot-config
+                    key: APP_ENV
+
+                # --- Sensitive Credentials (From Secret) ---
+             - name: DATABASE_USER
+               valueFrom:
+                  secretKeyRef:
+                    name: mysql-credentials
+                    key: MYSQL_USER
+             - name: DATABASE_PASSWORD
+               valueFrom:
+                    secretKeyRef:
+                      name: mysql-credentials
+                      key: MYSQL_PASSWORD
             # --- JVM MEMORY TUNING ---
-            - name: JAVA_TOOL_OPTIONS
-              value: "-XX:MinRAMPercentage=50.0 -XX:MaxRAMPercentage=75.0"
+             - name: JAVA_TOOL_OPTIONS
+               value: "-XX:MinRAMPercentage=50.0 -XX:MaxRAMPercentage=75.0"
                 # -------------------------
           ports:
             - containerPort: 8080

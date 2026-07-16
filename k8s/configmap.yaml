@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spring-boot-config
+data:
+  # The host points to your MySQL Service name
+  DATABASE_HOST: "mysql-service"
+  # The DB name matches what you defined in the MySQL manifest
+  DATABASE_NAME: "zelledb"
+  APP_ENV: "Minikube-Local"

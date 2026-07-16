@@ -32,13 +32,22 @@ spec:
           image: mysql:8.0
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: "rootpassword"
+              valueFrom:
+                  secretKeyRef:
+                    name: mysql-credentials
+                    key: MYSQL_ROOT_PASSWORD
             - name: MYSQL_DATABASE
               value: "zelledb"
             - name: MYSQL_USER
-              value: "zelleuser"
+              valueFrom:
+                  secretKeyRef:
+                    name: mysql-credentials
+                    key: MYSQL_USER
             - name: MYSQL_PASSWORD
-              value: "zellepassword"
+              valueFrom:
+                  secretKeyRef:
+                    name: mysql-credentials
+                    key: MYSQL_PASSWORD
           ports:
             - containerPort: 3306
           volumeMounts:
