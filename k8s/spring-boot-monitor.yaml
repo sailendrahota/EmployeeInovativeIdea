@@ -13,3 +13,19 @@ spec:
     - port: http          # <--- Must match the named port on your Service
       path: /api/actuator/prometheus
       interval: 15s
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: mysql-monitor
+  # Note: Prometheus Operator usually requires a specific label to pick this up.
+  # If this doesn't work, check your spring-boot-monitor.yaml and copy its labels exactly!
+  labels:
+    app: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql  # This tells Prometheus to look for your mysql-service
+  endpoints:
+    - port: metrics # This points directly to the port 9104 we named earlier!
+      interval: 15s
