@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: zelefrontend
-          image: sailenhota/zelefrontend:6475b36
+          image: sailenhota/zelefrontend:e263e2e
        #   imagePullPolicy: Never # Forces K8s to use your local image
           ports:
             - containerPort: 80

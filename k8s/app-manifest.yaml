@@ -39,7 +39,7 @@ spec:
       # ---------------------------
       containers:
         - name: spring-boot-app
-          image: sailenhota/zele-backend:6475b36
+          image: sailenhota/zele-backend:e263e2e
             # Inside app-manifest.yaml -> spec.template.spec.containers.env
           env:
               # --- Non-Sensitive Routing (From ConfigMap) ---
