@@ -19,6 +19,8 @@ metadata:
   name: mysql-deployment
 spec:
   replicas: 1 # Databases usually run as a single instance in basic setups
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: mysql
@@ -65,7 +67,7 @@ spec:
                   name: mysql-credentials
                   key: MYSQL_ROOT_PASSWORD
             - name: DATA_SOURCE_NAME
-              value: "root:$(MYSQL_ROOT_PASSWORD)@(localhost:3306)/"
+              value: "root:$(MYSQL_ROOT_PASSWORD)@tcp(localhost:3306)/"
           ports:
             - containerPort: 9104
               name: metrics
