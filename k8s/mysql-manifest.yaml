@@ -28,31 +28,48 @@ spec:
         app: mysql
     spec:
       containers:
+        # --- CONTAINER 1: THE ACTUAL DATABASE ---
         - name: mysql
           image: mysql:8.0
           env:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
-                  secretKeyRef:
-                    name: mysql-credentials
-                    key: MYSQL_ROOT_PASSWORD
+                secretKeyRef:
+                  name: mysql-credentials
+                  key: MYSQL_ROOT_PASSWORD
             - name: MYSQL_DATABASE
               value: "zelledb"
             - name: MYSQL_USER
               valueFrom:
-                  secretKeyRef:
-                    name: mysql-credentials
-                    key: MYSQL_USER
+                secretKeyRef:
+                  name: mysql-credentials
+                  key: MYSQL_USER
             - name: MYSQL_PASSWORD
               valueFrom:
-                  secretKeyRef:
-                    name: mysql-credentials
-                    key: MYSQL_PASSWORD
+                secretKeyRef:
+                  name: mysql-credentials
+                  key: MYSQL_PASSWORD
           ports:
             - containerPort: 3306
           volumeMounts:
             - name: mysql-persistent-storage
               mountPath: /var/lib/mysql
+
+        # --- CONTAINER 2: THE PROMETHEUS EXPORTER SIDECAR ---
+        - name: mysql-exporter
+          image: prom/mysqld-exporter:v0.15.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-credentials
+                  key: MYSQL_ROOT_PASSWORD
+            - name: DATA_SOURCE_NAME
+              value: "root:$(MYSQL_ROOT_PASSWORD)@(localhost:3306)/"
+          ports:
+            - containerPort: 9104
+              name: metrics
+
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:

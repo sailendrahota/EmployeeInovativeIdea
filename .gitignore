@@ -22,3 +22,4 @@ Thumbs.db
 *.tfstate.*
 crash.log
 crash.*.log
+rebuild-cluster.ps1
