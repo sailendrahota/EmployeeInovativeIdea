@@ -31,65 +31,67 @@ jobs:
           upload-result: false
           push-fixes: 'none'
 
-  # JOB 2: Build, Push, and Trigger GitOps Delivery (Fully Secure & Dynamic)
+  # JOB 2: Build, Push, and Trigger GitOps Delivery
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  #give permission to push or write in git repo
+      contents: write
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Dynamic Variable Step: Generates a short SHA to keep tag paths clean
+      # Set up Docker Buildx (Required for advanced GitHub Actions caching)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Set Short Git SHA
         id: vars
         run: |
           echo "SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)" >> $GITHUB_ENV
 
-      # Authenticates using your secure repo secrets
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Build Backend using the hyphenated name layout
+      # Backend Build with Native GitHub Layer Caching
       - name: Build and Push Backend
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: ./zelebackend
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/zele-backend:${{ env.SHORT_SHA }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      # Build Frontend using the standard non-hyphenated layout
+      # Frontend Build with Native GitHub Layer Caching
       - name: Build and Push Frontend
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           context: ./zele-frontend
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/zelefrontend:${{ env.SHORT_SHA }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      # GitOps Bridge: Updates both manifests with precision regex matching
       - name: Update Kubernetes Manifests with New Image Tags
         run: |
           echo "Deploying version: ${{ env.SHORT_SHA }}"
-          
-          # Safely targets and replaces the hyphenated backend image string
           sed -i "s|image: .*\/zele-backend:.*|image: ${{ secrets.DOCKER_USERNAME }}/zele-backend:${{ env.SHORT_SHA }}|g" k8s/app-manifest.yaml
-          
-          # Safely targets and replaces the frontend image string
           sed -i "s|image: .*\/zelefrontend:.*|image: ${{ secrets.DOCKER_USERNAME }}/zelefrontend:${{ env.SHORT_SHA }}|g" k8s/ui-manifest.yaml
 
-      # Secure Writeback: Pushes infrastructure changes back to GitHub
+      # Secure Writeback with Rebase protection against git conflicts
       - name: Commit and Push Manifest Changes back to GitHub
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
           git add k8s/app-manifest.yaml k8s/ui-manifest.yaml
-          
-          # The [skip ci] tag is critical to avoid building an infinite pipeline trigger loop
           git commit -m "chore(ops): auto-update application image tags to ${{ env.SHORT_SHA }} [skip ci]"
+          
+          # Rebase pulls any changes made while the docker build was running
+          git pull --rebase origin main
           git push origin main
