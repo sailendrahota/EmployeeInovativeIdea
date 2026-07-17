@@ -18,9 +18,11 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: mysql-monitor
+  namespace: default
   # Note: Prometheus Operator usually requires a specific label to pick this up.
   # If this doesn't work, check your spring-boot-monitor.yaml and copy its labels exactly!
   labels:
+    release: prometheus
     app: mysql
 spec:
   selector:
