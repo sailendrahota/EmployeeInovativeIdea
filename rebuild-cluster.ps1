@@ -4,7 +4,7 @@ Write-Host "Deleting old cluster state..."
 minikube delete
 
 Write-Host "Starting fresh Minikube cluster (4 CPUs, 8GB RAM)..."
-minikube start --cpus=4 --memory=5120
+minikube start --cpus=4 --memory=5850 --cni=calico
 
 Write-Host "Enabling required addons (Ingress & Metrics Server)..."
 minikube addons enable ingress
