@@ -7,8 +7,11 @@ WORKDIR /app
 
 # Copy your pom.xml and source code into the container
 COPY pom.xml .
+# Download all dependencies. Docker will cache this layer!
+# It will ONLY re-run if you actually change your pom.xml.
+RUN mvn dependency:go-offline -B
+# NOW copy the source code and compile
 COPY src ./src
-
 # Build the jar (we skip tests here just to make the Docker build faster)
 RUN mvn clean package -DskipTests
 
