@@ -1,11 +1,20 @@
-# 1. Main Application (default namespace - YOUR EXISTING SETUP)
+# ==========================================
+# 1. Main Application (default namespace)
+# ==========================================
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: hr-portal-ingress
   namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: "local-selfsigned-issuer" # Tells Cert-Manager to secure this
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"        # Allows large file uploads
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - hr-portal.local
+      secretName: hr-portal-tls-secret # Cert-Manager will automatically create this secret
   rules:
     - host: hr-portal.local
       http:
@@ -26,14 +35,23 @@ spec:
                   number: 80
 
 ---
+# ==========================================
 # 2. Monitoring Stack (monitoring namespace)
+# ==========================================
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: monitoring-ingress
   namespace: monitoring
+  annotations:
+    cert-manager.io/cluster-issuer: "local-selfsigned-issuer" # Tells Cert-Manager to secure this
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - grafana.hr-portal.local
+        - prometheus.hr-portal.local
+      secretName: monitoring-tls-secret
   rules:
     - host: grafana.hr-portal.local
       http:
@@ -57,17 +75,23 @@ spec:
                   number: 9090
 
 ---
+# ==========================================
 # 3. ArgoCD Stack (argocd namespace)
+# ==========================================
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: argocd-ingress
   namespace: argocd
   annotations:
-    # ArgoCD forces HTTPS internally. This tells NGINX how to talk to it.
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    cert-manager.io/cluster-issuer: "local-selfsigned-issuer" # Tells Cert-Manager to secure this
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"   # ArgoCD forces HTTPS internally.This tells NGINX how to talk to it.
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - argocd.hr-portal.local
+      secretName: argocd-tls-secret
   rules:
     - host: argocd.hr-portal.local
       http:
