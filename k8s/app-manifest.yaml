@@ -4,6 +4,10 @@ metadata:
   name: spring-boot-service
   labels:
     app: spring-boot
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"                     # Tells Prometheus to scrape the Service port
+    prometheus.io/path: "/actuator/prometheus"
 spec:
   type: ClusterIP
   selector:
