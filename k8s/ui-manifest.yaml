@@ -24,7 +24,7 @@ kind: Service
 metadata:
   name: zelefrontend-service
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: zelefrontend
   ports:

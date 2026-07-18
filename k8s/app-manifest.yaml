@@ -5,7 +5,7 @@ metadata:
   labels:
     app: spring-boot
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: spring-boot
   ports:
