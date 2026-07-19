@@ -1,4 +1,12 @@
 # EmployeeInovativeIdea
+# EmployeeInovativeIdea
+
+[![CI/CD Pipeline](https://github.com/sailendrahota/EmployeeInovativeIdea/actions/workflows/ci-cd.yaml/badge.svg)](https://github.com/sailendrahota/EmployeeInovativeIdea/actions)
+[![GitOps Managed](https://img.shields.io/badge/GitOps-ArgoCD-blue?style=flat&logo=argo)](https://argoproj.github.io/argo-cd/)
+[![Infrastructure](https://img.shields.io/badge/IaC-Terraform-623CE4?style=flat&logo=terraform)](https://www.terraform.io/)
+[![Network Security](https://img.shields.io/badge/Security-Zero_Trust-red?style=flat&logo=kalilinux)](https://www.tigera.io/project-calico/)
+
+*A Full-Stack Employee Registration and Tax Deduction Platform.*
 *A Full-Stack Employee Registration and Tax Deduction Platform.*
 
 This repository contains both the application source code (Spring Boot & Frontend) and the complete Infrastructure-as-Code (IaC) required to run it locally in a production-simulated Kubernetes environment.
