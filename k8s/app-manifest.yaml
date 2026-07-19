@@ -23,7 +23,7 @@ kind: Deployment
 metadata:
   name: spring-boot-deployment
 spec:
-  replicas: 2
+ # replicas: 2                   #let the HPA exclusively manage the count.
   selector:
     matchLabels:
       app: spring-boot
