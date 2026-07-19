@@ -85,3 +85,49 @@ resource "kubernetes_role" "junior_dev_role" {
     verbs      = ["get", "list", "watch"] # Notice: NO "delete" or "create" verbs!
   }
 }
+# ---------------------------------------------------------
+# NETWORK POLICY: Zero-Trust Database Lock-down
+# ---------------------------------------------------------
+resource "kubernetes_network_policy" "mysql_isolation" {
+  metadata {
+    name      = "mysql-zero-trust-policy"
+    namespace = "default"
+  }
+
+  spec {
+    # 1. Target the MySQL Database
+    pod_selector {
+      match_labels = {
+        app = "mysql"
+      }
+    }
+
+    policy_types = ["Ingress"]
+
+    ingress {
+      # ALLOW RULE 1: The Spring Boot Backend
+      from {
+        pod_selector {
+          match_labels = {
+            app = "spring-boot" # Matches your backend label perfectly
+          }
+        }
+      }
+
+      # ALLOW RULE 2: The Adminer GUI
+      from {
+        pod_selector {
+          match_labels = {
+            app = "adminer"
+          }
+        }
+      }
+
+      # Lock to MySQL port only
+      ports {
+        port     = "3306"
+        protocol = "TCP"
+      }
+    }
+  }
+}

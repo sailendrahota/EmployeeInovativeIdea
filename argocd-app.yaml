@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hr-portal-platform
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/sailendrahota/EmployeeInovativeIdea.git'   # <-- Update this!
+    targetRevision: HEAD # Tracks the main branch
+    path: k8s            # The folder where your manifests live
+  destination:
+    server: 'https://kubernetes.default.svc' # Deploys into its own cluster
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true     # Automatically deletes resources removed from Git
+      selfHeal: true  # Automatically overwrites manual changes made in the cluster
