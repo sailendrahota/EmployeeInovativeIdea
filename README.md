@@ -1,5 +1,4 @@
 # EmployeeInovativeIdea
-# EmployeeInovativeIdea
 
 [![CI/CD Pipeline](https://github.com/sailendrahota/EmployeeInovativeIdea/actions/workflows/ci-cd.yaml/badge.svg)](https://github.com/sailendrahota/EmployeeInovativeIdea/actions)
 [![GitOps Managed](https://img.shields.io/badge/GitOps-ArgoCD-blue?style=flat&logo=argo)](https://argoproj.github.io/argo-cd/)
