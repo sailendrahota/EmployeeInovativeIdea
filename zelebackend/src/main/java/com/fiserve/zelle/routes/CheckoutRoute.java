@@ -12,7 +12,8 @@ public class CheckoutRoute extends RouteBuilder {
         from("direct:startCheckout")
                 .log("Received order: ${body}")
                 .marshal().json() // Converts the Java object to JSON
-                .to("kafka:orders-topic?brokers=kafka.event-streaming.svc.cluster.local:9092")
+                // This tells Camel: "Use the 'kafka.brokers' property, but if it doesn't exist, default to the Kubernetes URL"
+                .to("kafka:orders-topic?brokers={{kafka.brokers:kafka.event-streaming.svc.cluster.local:9092}}")
                 .log("Order sent to Kafka successfully!");
     }
 
