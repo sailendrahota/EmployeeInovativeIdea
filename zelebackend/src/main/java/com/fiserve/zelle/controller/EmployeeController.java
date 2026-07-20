@@ -5,14 +5,11 @@ import com.fiserve.zelle.exception.InvalidDataException;
 import com.fiserve.zelle.model.EmployeeDetail;
 import com.fiserve.zelle.response.AccountResponse;
 import com.fiserve.zelle.service.AccountService;
-
-// Modern OpenAPI 3 imports for Spring Boot 3
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j; // Lombok Logger
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+// Modern OpenAPI 3 imports for Spring Boot 3
 
 @Slf4j // Injects the 'log' variable automatically
 @RestController
