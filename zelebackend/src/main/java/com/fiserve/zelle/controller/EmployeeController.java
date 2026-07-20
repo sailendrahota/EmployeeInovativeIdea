@@ -5,12 +5,14 @@ import com.fiserve.zelle.exception.InvalidDataException;
 import com.fiserve.zelle.model.EmployeeDetail;
 import com.fiserve.zelle.response.AccountResponse;
 import com.fiserve.zelle.service.AccountService;
-import com.google.common.net.HttpHeaders;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.LinkedHashMap;
 import java.util.Map;

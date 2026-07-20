@@ -23,8 +23,9 @@ helm repo update
 
 Write-Host "7/10: Installing Platform Foundations..." -ForegroundColor Magenta
 helm upgrade --install prometheus prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
-helm upgrade --install loki grafana/loki-stack -n monitoring --create-namespace
+helm upgrade --install loki grafana/loki-stack -n monitoring --create-namespace --set grafana.datasource.isDefault=false
 helm upgrade --install sealed-secrets bitnami/sealed-secrets -n kube-system --create-namespace
+kubectl apply -f kafka-dev.yaml     # helm upgrade --install kafka bitnami/kafka --namespace event-streaming --create-namespace -f k8s/kafka-values.yml
 helm upgrade --install cert-manager jetstack/cert-manager -n cert-manager --create-namespace --set crds.enabled=true
 
 Write-Host "8/10: Installing ArgoCD..." -ForegroundColor Cyan
