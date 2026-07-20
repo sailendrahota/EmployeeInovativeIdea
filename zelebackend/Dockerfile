@@ -2,7 +2,7 @@
 # STAGE 1: The "Kitchen" (Build Stage)
 # ==========================================
 # We use a heavy image that includes Maven and the full JDK.
-FROM maven:3.9.6-eclipse-temurin-17 AS builder
+FROM maven:3.9.6-eclipse-temurin-21 AS builder
 WORKDIR /app
 
 # Copy your pom.xml and source code into the container
@@ -19,7 +19,7 @@ RUN mvn clean package -DskipTests
 # STAGE 2: The "Dining Room" (Run Stage)
 # ==========================================
 # We throw away the Kitchen and use a tiny, secure Alpine Linux image with ONLY the JRE.
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # [BONUS SECURITY]: Never run a container as the 'root' user!

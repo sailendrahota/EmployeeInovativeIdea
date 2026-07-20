@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
@@ -19,15 +20,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @SpringBootApplication
-//@EnableSwagger2
-//@EnableEurekaClient
 @Configuration
-
 @OpenAPIDefinition(info = @Info(
         title = "Employee API",
         version = "1.0.0",
         description = "RESTful service for Employee application.",
-        contact = @Contact(name = "Immaginnovate", email = "testmail@imagineInovet.com")
+        contact = @Contact(name = "Immaginnovate", email = "testmail@zelleHr.com")
 ))
 public class ZelleApplication {
 
@@ -44,12 +42,12 @@ public class ZelleApplication {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest()
-                        .permitAll())
-                .csrf(AbstractHttpConfigurer::disable);
-        http.headers().frameOptions().disable();
-        return http.build();
+        http
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
 
+        return http.build();
     }
 
     @Bean
@@ -62,32 +60,7 @@ public class ZelleApplication {
         return source;
     }
 
-  /*  @Bean
-    public Docket productApi() {
-        return new Docket(DocumentationType.SWAGGER_2).select()
 
-                .apis(RequestHandlerSelectors.basePackage("com.fiserve.zelle")).build().apiInfo(apiEndPointsInfo())
-                .securitySchemes(Lists.newArrayList(apiKey()));
-    }
-
-    private ApiKey apiKey() {
-
-        return new ApiKey("Authorization", "Authorization", "header");
-    }
-
-    public static final Contact DEFAULT_CONTACT = new Contact(
-            "Immaginnovate", "http://expleogroup.com/", "testmail@imagineInovet.com");
-
-    private ApiInfo apiEndPointsInfo() {
-        return new ApiInfoBuilder()
-
-                .title("Employee")
-                .description("RESTfull service for Employee application. For this sample, you can set the api key  (Bearer <your JWT token>)  to test the authorized service.")
-
-                .version("1.0.0")
-                .contact(DEFAULT_CONTACT)
-                .build();
-    }*/
 }
 
 
