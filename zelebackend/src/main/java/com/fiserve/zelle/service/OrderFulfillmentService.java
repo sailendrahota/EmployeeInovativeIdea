@@ -28,6 +28,6 @@ public class OrderFulfillmentService {
         );
 
         orderRepository.save(entity);
-        log.info(" ✅ Order successfully persisted to MySQL!: {}"," event.orderId()");
+        log.info("Order successfully persisted to MySQL!: {}"," event.orderId()");
     }
 }

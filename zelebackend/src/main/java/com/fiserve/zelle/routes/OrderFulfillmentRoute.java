@@ -16,7 +16,7 @@ public class OrderFulfillmentRoute extends RouteBuilder {
     public void configure() throws Exception {
 
         from("kafka:orders-topic?brokers=" + kafkaBrokers + "&groupId=fulfillment-service-group")
-                .log("📥 Picked up new order event from Kafka: ${body}")
+                .log("Picked up new order event from Kafka: ${body}")
 
                 // Unmarshal directly into the Java Record
                 .unmarshal().json(JsonLibrary.Jackson, OrderEvent.class)
@@ -24,6 +24,6 @@ public class OrderFulfillmentRoute extends RouteBuilder {
                 // Hand off the Record to the Spring Bean
                 .bean("orderFulfillmentService", "processAndSaveOrder")
 
-                .log("🎉 Order fulfillment processing complete!");
+                .log("Order fulfillment processing complete!");
     }
 }
