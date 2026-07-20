@@ -3,9 +3,11 @@ package com.fiserve.zelle.service;
 import com.fiserve.zelle.model.OrderEntity;
 import com.fiserve.zelle.model.OrderEvent;
 import com.fiserve.zelle.repository.OrderRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service("orderFulfillmentService")
 public class OrderFulfillmentService {
 
@@ -26,6 +28,6 @@ public class OrderFulfillmentService {
         );
 
         orderRepository.save(entity);
-        System.out.println("✅ Order " + event.orderId() + " successfully persisted to MySQL!");
+        log.info(" ✅ Order successfully persisted to MySQL!: {}"," event.orderId()");
     }
 }
